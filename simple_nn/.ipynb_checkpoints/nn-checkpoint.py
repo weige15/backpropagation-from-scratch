@@ -6,6 +6,7 @@ class NeuralNetwork:
         self.W = []
         self.layers = layers
         self.alpha = alpha
+        self.loss_history = []  # <-- Add this line
 
         for i in np.arange(0, len(layers) - 2):
             w = np.random.randn(layers[i] + 1, layers[i + 1] + 1)
@@ -25,12 +26,16 @@ class NeuralNetwork:
 
     def fit(self, X, y, epochs=1000, displayUpdate=100):
         X = np.c_[X, np.ones((X.shape[0]))]
+    
         for epoch in np.arange(0, epochs):
             for (x, target) in zip(X, y):
                 self.fit_partial(x, target)
-
+    
+            # Calculate and store loss
+            loss = self.calculate_loss(X, y)
+            self.loss_history.append(loss)
+    
             if epoch == 0 or (epoch + 1) % displayUpdate == 0:
-                loss = self.calculate_loss(X, y)
                 print("[INFO] epoch={}, loss={:.7f}".format(epoch + 1, loss))
 
     def fit_partial(self, x, y):
